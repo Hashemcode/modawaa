@@ -49,7 +49,13 @@
     if (ended || !peer || peer.destroyed) return;
     if (peer.disconnected) { try { peer.reconnect(); } catch (e) {} scheduleRetry(3000); return; }
     const c = peer.connect(ROOM, {reliable: true, serialization: 'json'});
-    const timer = setTimeout(() => { if (!c.open) { try { c.close(); } catch (e) {} scheduleRetry(1000); } }, 10000);
+    const timer = setTimeout(() => {
+      if (!c.open) {                         // the room exists but no direct/relayed path was found
+        try { c.close(); } catch (e) {}
+        if (phase === 'connect') $('connectmsg').textContent = T.net_blocked;
+        scheduleRetry(1000);
+      }
+    }, 15000);
     c.on('open', () => { clearTimeout(timer); conn = c; send({type: 'hello'}); });
     c.on('data', m => onData(c, m));
     c.on('close', () => {
