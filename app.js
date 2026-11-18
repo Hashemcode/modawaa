@@ -95,6 +95,7 @@
       case 'admitted': phase = 'call'; go('s-call'); show(T.connecting); break;
       case 'chat': $('chatbox').hidden = false; addChat(lang === 'ar' ? 'الطبيب' : 'Doctor', m.text, false); break;
       case 'ended': message(T.ended); break;
+      case 'replaced': message(T.replaced); break;   // opened on another device: stop, don't retry
     }
   }
 
